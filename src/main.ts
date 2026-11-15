@@ -1,3 +1,5 @@
+import { renderCountryCard } from "./renderCountryCard.js";
+
 const main = document.createElement("main");
 main.className = "search-screen";
 
@@ -16,6 +18,19 @@ input.id = "country-search";
 input.type = "search";
 input.placeholder = "e.g. Spain";
 
-panel.append(title, label, input);
+const results = document.createElement("div");
+results.className = "search-results";
+
+panel.append(title, label, input, results);
 main.append(panel);
 document.body.append(main);
+
+results.append(
+  renderCountryCard({
+    name: "Spain",
+    flag: "🇪🇸",
+    capital: "Madrid",
+    region: "Europe",
+    population: 47_000_000,
+  }),
+);
