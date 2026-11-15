@@ -1,0 +1,48 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #17364b;
+}
+
+.search-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 24px;
+  background: #d5effb url("./assets/bg.png") center / cover no-repeat;
+}
+
+.search-panel {
+  width: min(100%, 440px);
+}
+
+.search-panel h1 {
+  margin: 0 0 24px;
+  text-align: center;
+  font-size: clamp(2rem, 6vw, 3.25rem);
+}
+
+.search-panel label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.search-panel input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #8baabd;
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.search-panel input:focus-visible {
+  outline: 2px solid #285c7b;
+  outline-offset: 3px;
+}
