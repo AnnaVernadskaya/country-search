@@ -37,6 +37,11 @@ input.addEventListener("keydown", async (event) => {
     return;
   }
 
+  const loading = document.createElement("p");
+  loading.setAttribute("role", "status");
+  loading.textContent = "Loading…";
+  results.replaceChildren(loading);
+
   const { signal } = new AbortController();
 
   try {
@@ -48,5 +53,7 @@ input.addEventListener("keydown", async (event) => {
     results.replaceChildren(...cards);
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.remove();
   }
 });
