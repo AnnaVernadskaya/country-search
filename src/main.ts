@@ -1,4 +1,6 @@
 import { renderCountryCard } from "./renderCountryCard.js";
+import { mapCountryResponse } from "./mapCountryResponse.js";
+import { searchCountries } from "./searchCountries.js";
 
 const main = document.createElement("main");
 main.className = "search-screen";
@@ -25,12 +27,26 @@ panel.append(title, label, input, results);
 main.append(panel);
 document.body.append(main);
 
-results.append(
-  renderCountryCard({
-    name: "Spain",
-    flag: "🇪🇸",
-    capital: "Madrid",
-    region: "Europe",
-    population: 47_000_000,
-  }),
-);
+input.addEventListener("keydown", async (event) => {
+  if (event.key !== "Enter") return;
+
+  const query = input.value.trim();
+
+  if (!query) {
+    results.replaceChildren();
+    return;
+  }
+
+  const { signal } = new AbortController();
+
+  try {
+    const countries = await searchCountries(query, signal);
+    const cards = countries.map((country) =>
+      renderCountryCard(mapCountryResponse(country)),
+    );
+
+    results.replaceChildren(...cards);
+  } catch (error) {
+    console.error(error);
+  }
+});

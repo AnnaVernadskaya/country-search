@@ -1,6 +1,6 @@
 type CountryCardData = {
   name: string;
-  flag: string;
+  flagUrl: string;
   capital: string;
   region: string;
   population: number;
@@ -13,10 +13,12 @@ export function renderCountryCard(country: CountryCardData): HTMLElement {
   const header = document.createElement("header");
   header.className = "country-card__header";
 
-  const flag = document.createElement("span");
+  const flag = document.createElement("img");
   flag.className = "country-card__flag";
-  flag.textContent = country.flag;
-  flag.setAttribute("aria-hidden", "true");
+  flag.src = country.flagUrl;
+  flag.alt = "";
+  flag.width = 32;
+  flag.height = 22;
 
   const title = document.createElement("h2");
   title.textContent = country.name;

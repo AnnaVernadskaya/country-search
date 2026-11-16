@@ -1,10 +1,12 @@
+import type { RawCountry } from "./mapCountryResponse.js";
+
 export async function searchCountries(
   query: string,
   signal: AbortSignal,
-): Promise<unknown[]> {
+): Promise<RawCountry[]> {
   const url = `https://countries.dev/name/${encodeURIComponent(query)}`;
   const response = await fetch(url, { signal });
-  const countries: unknown[] = await response.json();
+  const countries: RawCountry[] = await response.json();
 
   return countries;
 }
