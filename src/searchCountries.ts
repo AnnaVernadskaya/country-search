@@ -1,12 +1,30 @@
 import type { RawCountry } from "./mapCountryResponse.js";
 
+export class HttpError extends Error {
+  readonly status: number;
+
+  constructor(status: number) {
+    super(`Country search failed with HTTP status ${status}`);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
 export async function searchCountries(
   query: string,
   signal: AbortSignal,
 ): Promise<RawCountry[]> {
   const url = `https://countries.dev/name/${encodeURIComponent(query)}`;
   const response = await fetch(url, { signal });
-  const countries: RawCountry[] = await response.json();
 
+  if (response.status === 404) {
+    return [];
+  }
+
+  if (!response.ok) {
+    throw new HttpError(response.status);
+  }
+
+  const countries: RawCountry[] = await response.json();
   return countries;
 }
