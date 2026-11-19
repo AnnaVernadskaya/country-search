@@ -1,6 +1,6 @@
 import { renderCountryCard } from "./renderCountryCard.js";
 import { mapCountryResponse } from "./mapCountryResponse.js";
-import { searchCountries } from "./searchCountries.js";
+import { createSearchController } from "./searchController.js";
 
 const main = document.createElement("main");
 main.className = "search-screen";
@@ -27,33 +27,50 @@ panel.append(title, label, input, results);
 main.append(panel);
 document.body.append(main);
 
-input.addEventListener("keydown", async (event) => {
-  if (event.key !== "Enter") return;
+const controller = createSearchController((state) => {
+  results.replaceChildren();
 
-  const query = input.value.trim();
+  if (state.status === "idle") return;
 
-  if (!query) {
-    results.replaceChildren();
+  if (state.status === "loading") {
+    const loading = document.createElement("p");
+    loading.setAttribute("role", "status");
+    loading.textContent = "Loading…";
+    results.append(loading);
     return;
   }
 
-  const loading = document.createElement("p");
-  loading.setAttribute("role", "status");
-  loading.textContent = "Loading…";
-  results.replaceChildren(loading);
+  if (state.status === "error") {
+    const message = document.createElement("p");
+    message.setAttribute("role", "alert");
+    message.textContent = state.message;
 
-  const { signal } = new AbortController();
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.textContent = "Retry";
+    retry.addEventListener("click", () => {
+      controller.retry();
+    });
 
-  try {
-    const countries = await searchCountries(query, signal);
-    const cards = countries.map((country) =>
-      renderCountryCard(mapCountryResponse(country)),
-    );
-
-    results.replaceChildren(...cards);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loading.remove();
+    results.append(message, retry);
+    return;
   }
+
+  if (state.countries.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.setAttribute("role", "status");
+    emptyMessage.textContent = "No countries found.";
+    results.append(emptyMessage);
+    return;
+  }
+
+  const cards = state.countries.map((country) =>
+    renderCountryCard(mapCountryResponse(country)),
+  );
+
+  results.append(...cards);
+});
+
+input.addEventListener("input", () => {
+  controller.updateQuery(input.value);
 });
